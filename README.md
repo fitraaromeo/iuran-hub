@@ -2,6 +2,14 @@
 
 Aplikasi web modern (Single Page Application) berbasis **Vite + React (Frontend)** dan **Laravel 11 (Backend API)** yang dirancang khusus untuk mempermudah tugas Pak RT dalam mengelola keuangan, mendata hunian warga, menagih iuran bulanan secara dinamis, mengelola pengeluaran kas, serta menghasilkan buku kas bulanan siap cetak.
 
+### 🛠️ Tech Stack & Library Utama:
+* **Backend**: Laravel 11 (PHP 8.2+) dengan Eloquent ORM & SQLite/MySQL DB.
+* **Frontend**: React 19 (JavaScript ES6+) & Vite 8.
+* **Libraries & Assets**:
+  * **`lucide-react`** (digunakan untuk memuat ikon-ikon premium di menu navigasi, kartu metrik KPI, dan aksi dashboard).
+  * **Vanilla CSS Modern** (styling sistem warna dinamis Light/Dark mode).
+
+
 ---
 
 ## 📸 Dokumentasi & Hasil Tugas (Screenshots Fitur)
