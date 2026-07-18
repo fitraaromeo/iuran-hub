@@ -250,4 +250,22 @@ class PaymentController extends Controller
             'data' => $paymentsList
         ]);
     }
+
+    /**
+     * Remove the specified payment/bill from storage.
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        $payment = Payment::find($id);
+
+        if (!$payment) {
+            return response()->json(['message' => 'Payment not found.'], 404);
+        }
+
+        $payment->delete();
+
+        return response()->json([
+            'message' => 'Payment deleted successfully.'
+        ]);
+    }
 }

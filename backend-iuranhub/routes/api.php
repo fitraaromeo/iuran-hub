@@ -25,7 +25,7 @@ Route::apiResource('fee-types', FeeTypeController::class);
 // Payments Routing
 Route::post('payments/generate-monthly-bills', [PaymentController::class, 'generateMonthlyBills']);
 Route::post('payments/pay-bulk', [PaymentController::class, 'payBulk']);
-Route::apiResource('payments', PaymentController::class)->only(['index', 'store']);
+Route::apiResource('payments', PaymentController::class)->only(['index', 'store', 'destroy']);
 Route::post('payments/{id}/pay', [PaymentController::class, 'pay']);
 
 // Reports Routing
