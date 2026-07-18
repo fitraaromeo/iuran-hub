@@ -226,7 +226,7 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
    DB_PASSWORD=
    ```
 
-4. Install semua dependensi PHP:
+4. Install semua dependensi PHP (termasuk Laravel Sanctum yang otomatis terunduh):
 
    ```bash
    composer install
@@ -238,11 +238,14 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
    php artisan key:generate
    ```
 
-6. Jalankan migrasi tabel dan data demo awal (seeder):
+6. Jalankan migrasi tabel database (termasuk tabel personal access token Sanctum) dan seeder data awal:
 
    ```bash
    php artisan migrate:fresh --seed
    ```
+
+   > [!NOTE]
+   > Langkah ini wajib dilakukan untuk membuat tabel `personal_access_tokens` untuk sesi login serta meng-seed user admin default.
 
 7. Buat symlink storage (untuk foto profil warga):
 
