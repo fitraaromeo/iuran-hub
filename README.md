@@ -7,13 +7,13 @@ Aplikasi web modern berbasis **Vite + React (Frontend)** dan **Laravel 11 (Backe
 
 ## 🛠️ Tech Stack
 
-| Lapisan | Teknologi |
-|---------|-----------|
-| **Frontend** | React 19 + Vite 8 (JavaScript ES6+) |
-| **Backend** | Laravel 11 (PHP 8.2+) + Eloquent ORM |
-| **Database** | MySQL 8 |
-| **Icons** | `lucide-react` |
-| **Styling** | Vanilla CSS (Dark/Light Mode) |
+| Lapisan | Teknologi | Versi |
+|---------|-----------|-------|
+| **Frontend** | React + Vite (JavaScript ES6+) | React `^19.2.7` · Vite `^8.1.1` |
+| **Backend** | Laravel + Eloquent ORM | Laravel `^13.8` · PHP `^8.3` |
+| **Database** | MySQL | `8.x` |
+| **Icons** | lucide-react | `^1.25.0` |
+| **Styling** | Vanilla CSS (Dark / Light Mode) | — |
 
 ---
 
