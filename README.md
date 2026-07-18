@@ -203,10 +203,10 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
 
 ### Langkah 3 — Konfigurasi & Menjalankan Backend API (Laravel)
 
-1. Buka **Command Prompt** dan masuk ke folder backend:
+1. Buka **Command Prompt** dan masuk ke folder backend dari root project:
 
    ```bash
-   cd "d:\Projects\Skill Fit Test BEON Intermedia\backend-iuranhub"
+   cd backend-iuranhub
    ```
 
 2. Salin file konfigurasi `.env`:
@@ -264,10 +264,10 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
 ### Langkah 4 — Konfigurasi & Menjalankan Frontend (Vite React)
 
 1. Buka **Command Prompt baru** (jangan tutup terminal backend).
-2. Masuk ke folder frontend:
+2. Masuk ke folder frontend dari root project:
 
    ```bash
-   cd "d:\Projects\Skill Fit Test BEON Intermedia\iuranhub"
+   cd iuranhub
    ```
 
 3. Install semua dependensi Node:
