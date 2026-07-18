@@ -132,4 +132,16 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
    http://localhost:5173/
    ```
 
+### Langkah 5: Menginstal Library Tambahan Secara Manual (Jika Terjadi Kendala / Error Icon)
+Secara normal, perintah `npm install` pada Langkah 4 sudah mengunduh seluruh library secara otomatis. Namun, jika Anda menggunakan laptop bersih dan mengalami kendala seperti icon tidak muncul atau muncul error di console (misal: *Can't resolve 'lucide-react'*), ikuti langkah berikut:
+
+1. Buka CMD / Terminal baru dan pastikan Anda berada di dalam folder **`iuranhub`**.
+2. Jalankan perintah instalasi library icon secara manual:
+   ```bash
+   npm install lucide-react
+   ```
+3. Restart server Vite Anda dengan menekan tombol `Ctrl + C` pada terminal frontend, lalu ketik `npm run dev` kembali.
+
+---
+
 Aplikasi **IuranHub RT** kini siap digunakan sepenuhnya dengan data simulasi awal yang lengkap!
