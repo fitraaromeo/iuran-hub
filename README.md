@@ -119,7 +119,7 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
 ### Langkah 4: Konfigurasi & Menjalankan Frontend Client (Vite React)
 1. Buka CMD / Terminal baru (jangan menutup CMD backend yang sedang berjalan).
 2. Arahkan CMD ke direktori **`iuranhub`** di dalam project ini. (Contoh: `cd d:\Projects\Skill Fit Test BEON Intermedia\iuranhub`).
-3. Install semua dependensi Node modules:
+3. Install semua dependensi Node modules (termasuk library icon `lucide-react`):
    ```bash
    npm install
    ```
