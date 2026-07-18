@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
         // 1. Create a default User for API access testing if needed
         User::factory()->create([
             'name' => 'Pak RT',
-            'email' => 'rt@example.com',
-            'password' => bcrypt('password'),
+            'email' => 'admin@iuranhub.rt',
+            'password' => bcrypt('pakrt2024'),
         ]);
 
         // Clean up previous data to avoid duplicate key issues during seed

@@ -20,7 +20,15 @@ Aplikasi web modern berbasis **Vite + React (Frontend)** dan **Laravel 13 (Backe
 
 ## 📸 Fitur & Dokumentasi Visual
 
-### 1. Dashboard Utama
+### 1. Halaman Login (Autentikasi Admin)
+
+Sistem masuk aman menggunakan token-based session yang didukung oleh Laravel Sanctum. Menjamin hanya pengurus RT (Administrator) terverifikasi yang dapat mengelola data keuangan dan hunian.
+
+![Halaman Login](screenshots/login_page.png)
+
+---
+
+### 2. Dashboard Utama
 
 Ringkasan metrik KPI real-time: Sisa Saldo Kas, Tingkat Hunian Rumah, Total Warga Terdaftar, dan Tagihan Belum Dibayar. Dilengkapi grafik batang mutasi kas bulanan, panel Aksi Cepat Pak RT, serta daftar transaksi terbaru.
 
@@ -28,7 +36,7 @@ Ringkasan metrik KPI real-time: Sisa Saldo Kas, Tingkat Hunian Rumah, Total Warg
 
 ---
 
-### 2. Kelola Inventaris Rumah
+### 3. Kelola Inventaris Rumah
 
 Manajemen seluruh blok rumah di perumahan. Setiap kartu rumah menampilkan status hunian (Dihuni / Kosong), nama penghuni aktif, dan aksi cepat untuk edit atau hapus data rumah.
 
@@ -36,7 +44,7 @@ Manajemen seluruh blok rumah di perumahan. Setiap kartu rumah menampilkan status
 
 ---
 
-### 3. Tambah Data Rumah
+### 4. Tambah Data Rumah
 
 Form modal untuk menambahkan blok rumah baru ke dalam sistem dengan nomor blok dan keterangan.
 
@@ -44,7 +52,7 @@ Form modal untuk menambahkan blok rumah baru ke dalam sistem dengan nomor blok d
 
 ---
 
-### 4. Edit Data Rumah
+### 5. Edit Data Rumah
 
 Form modal edit data rumah yang sudah ada, memungkinkan perubahan nomor blok dan informasi terkait.
 
@@ -52,7 +60,7 @@ Form modal edit data rumah yang sudah ada, memungkinkan perubahan nomor blok dan
 
 ---
 
-### 5. History Hunian Rumah
+### 6. History Hunian Rumah
 
 Setiap rumah memiliki catatan historis siapa saja yang pernah menghuni. Klik pada kartu rumah untuk membuka modal detail yang menampilkan riwayat lengkap penghuni beserta tanggal masuk dan keluar.
 
@@ -60,7 +68,7 @@ Setiap rumah memiliki catatan historis siapa saja yang pernah menghuni. Klik pad
 
 ---
 
-### 6. Kelola Database Warga
+### 7. Kelola Database Warga
 
 Tabel data seluruh warga perumahan beserta informasi kontak, jenis tinggal (Tetap / Kontrak), dan status aktif. Terdapat aksi tambah, edit, dan hapus warga.
 
@@ -68,7 +76,7 @@ Tabel data seluruh warga perumahan beserta informasi kontak, jenis tinggal (Teta
 
 ---
 
-### 7. Tambah Data Warga
+### 8. Tambah Data Warga
 
 Form modal lengkap untuk mendaftarkan warga baru ke dalam sistem, termasuk nama lengkap, nomor telepon, dan tipe hunian.
 
@@ -76,7 +84,7 @@ Form modal lengkap untuk mendaftarkan warga baru ke dalam sistem, termasuk nama 
 
 ---
 
-### 8. Edit Data Warga
+### 9. Edit Data Warga
 
 Form modal edit untuk memperbarui informasi warga yang sudah terdaftar.
 
@@ -84,7 +92,7 @@ Form modal edit untuk memperbarui informasi warga yang sudah terdaftar.
 
 ---
 
-### 9. Master Jenis Iuran
+### 10. Master Jenis Iuran
 
 Mengelola kategori dan tarif iuran secara dinamis (contoh: Kebersihan, Satpam, Dana Sosial). Admin dapat menambah, mengedit, dan menghapus jenis iuran sesuai kebutuhan perumahan.
 
@@ -92,7 +100,7 @@ Mengelola kategori dan tarif iuran secara dinamis (contoh: Kebersihan, Satpam, D
 
 ---
 
-### 10. Kelola Tagihan Iuran
+### 11. Kelola Tagihan Iuran
 
 Daftar seluruh tagihan iuran warga dengan status Lunas / Belum Bayar. Mendukung filter berdasarkan bulan, tahun, dan blok rumah.
 
@@ -100,7 +108,7 @@ Daftar seluruh tagihan iuran warga dengan status Lunas / Belum Bayar. Mendukung 
 
 ---
 
-### 11. Generate Tagihan Bulanan Otomatis
+### 12. Generate Tagihan Bulanan Otomatis
 
 Fitur "Tagih Bulanan" membuat tagihan iuran secara otomatis untuk seluruh rumah yang berpenghuni sesuai jenis iuran aktif — hanya dengan satu kali klik. Rumah kosong otomatis dibebaskan dari tagihan.
 
@@ -108,7 +116,7 @@ Fitur "Tagih Bulanan" membuat tagihan iuran secara otomatis untuk seluruh rumah 
 
 ---
 
-### 12. Pembayaran Manual per Tagihan
+### 13. Pembayaran Manual per Tagihan
 
 Konfirmasi pembayaran individual disertai countdown 5 detik dengan opsi Batalkan Pembayaran sebelum transaksi dikunci ke database.
 
@@ -116,7 +124,7 @@ Konfirmasi pembayaran individual disertai countdown 5 detik dengan opsi Batalkan
 
 ---
 
-### 13. Pembayaran Sekaligus (Bulk Pay)
+### 14. Pembayaran Sekaligus (Bulk Pay)
 
 Warga dapat membayar iuran di muka hingga 1 tahun ke depan sekaligus dalam satu transaksi, memudahkan pengelolaan kas jangka panjang.
 
@@ -124,7 +132,7 @@ Warga dapat membayar iuran di muka hingga 1 tahun ke depan sekaligus dalam satu 
 
 ---
 
-### 14. Kelola Pengeluaran Kas
+### 15. Kelola Pengeluaran Kas
 
 Pencatatan seluruh pengeluaran operasional RT (gaji satpam, token listrik, perawatan sarana) secara terperinci dengan kategori, deskripsi, dan nominal. Mendukung tambah, edit, dan hapus pengeluaran.
 
@@ -132,7 +140,7 @@ Pencatatan seluruh pengeluaran operasional RT (gaji satpam, token listrik, peraw
 
 ---
 
-### 15. Edit Data Pengeluaran Kas
+### 16. Edit Data Pengeluaran Kas
 
 Form modal untuk memperbarui catatan pengeluaran kas yang sudah tercatat, termasuk kategori, deskripsi, nominal, dan tanggal pengeluaran.
 
@@ -140,7 +148,7 @@ Form modal untuk memperbarui catatan pengeluaran kas yang sudah tercatat, termas
 
 ---
 
-### 16. Laporan Buku Kas Bulanan (Tampilan Web)
+### 17. Laporan Buku Kas Bulanan (Tampilan Web)
 
 Menampilkan mutasi saldo kas secara terperinci setiap bulan: saldo awal carry-over, total pemasukan iuran, total pengeluaran, dan saldo akhir bersih — disajikan dalam dua tabel sejajar (debit dan kredit).
 
@@ -148,7 +156,7 @@ Menampilkan mutasi saldo kas secara terperinci setiap bulan: saldo awal carry-ov
 
 ---
 
-### 17. Laporan Buku Kas (Cetak PDF)
+### 18. Laporan Buku Kas (Cetak PDF)
 
 Laporan buku kas siap cetak dengan format dokumen resmi bergaya profesional: kop surat dengan logo RT, seksi bernomor (Ringkasan, Mutasi Debit, Mutasi Kredit, Rekap Saldo Akhir), tabel dengan nomor urut dan baris subtotal, serta footer tanggal cetak otomatis.
 
@@ -276,6 +284,10 @@ Panduan ini ditulis dengan asumsi laptop Anda **benar-benar baru / bersih** dan 
    http://localhost:5173/
    ```
    ✅ Aplikasi **IuranHub RT** siap digunakan!
+
+6. Masuk ke Dashboard menggunakan akun administrator default:
+   - **Email**: `admin@iuranhub.rt`
+   - **Password**: `pakrt2024`
 
 ---
 

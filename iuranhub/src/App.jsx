@@ -14,6 +14,7 @@ import FeeTypes from './pages/FeeTypes';
 import Payments from './pages/Payments';
 import Expenses from './pages/Expenses';
 import Reports from './pages/Reports';
+import Login from './pages/Login';
 
 function App() {
   // Navigation & Theme State
@@ -69,6 +70,9 @@ function App() {
   const [activePaymentTimer, setActivePaymentTimer] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('iuranhub_token'));
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   // Active items for modals
   const [selectedHouse, setSelectedHouse] = useState(null);
@@ -151,6 +155,7 @@ function App() {
 
   // Load Initial Core Databases
   const loadData = async () => {
+    if (!isAuthenticated) return;
     let connected = false;
 
     // 1. Houses
@@ -265,6 +270,7 @@ function App() {
   useEffect(() => {
     loadData();
   }, [
+    isAuthenticated,
     housesPage, houseFilter,
     residentsPage, residentFilter,
     paymentsPage, paymentStatusFilter, paymentHouseFilter,
@@ -278,6 +284,53 @@ function App() {
   const triggerToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  // Verify auth session on mount & listen to unauthorized API events
+  useEffect(() => {
+    const checkSession = async () => {
+      const token = localStorage.getItem('iuranhub_token');
+      if (token) {
+        try {
+          const res = await api.getMe();
+          if (res.user) {
+            setUser(res.user);
+            setIsAuthenticated(true);
+          } else {
+            handleLogout();
+          }
+        } catch (e) {
+          handleLogout();
+        }
+      } else {
+        setIsAuthenticated(false);
+      }
+      setAuthLoading(false);
+    };
+
+    checkSession();
+
+    const handleUnauthorized = () => {
+      handleLogout();
+    };
+
+    window.addEventListener('unauthorized-api-call', handleUnauthorized);
+    return () => {
+      window.removeEventListener('unauthorized-api-call', handleUnauthorized);
+    };
+  }, []);
+
+  const handleLoginSuccess = (token, loggedInUser) => {
+    setIsAuthenticated(true);
+    setUser(loggedInUser);
+    triggerToast('Login berhasil! Selamat datang kembali.');
+  };
+
+  const handleLogout = async () => {
+    await api.logout();
+    setIsAuthenticated(false);
+    setUser(null);
+    triggerToast('Anda telah keluar dari sistem.', 'danger');
   };
 
   // FORM SUBMISSION HANDLERS
@@ -582,6 +635,48 @@ function App() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'var(--bg-main)',
+        color: '#ffffff'
+      }}>
+        <div className="spinner-sm" style={{ width: '40px', height: '40px', borderTopColor: 'var(--primary)' }}></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        {toast && (
+          <div style={{
+            position: 'fixed',
+            top: '24px',
+            right: '24px',
+            padding: '16px 24px',
+            borderRadius: '12px',
+            backgroundColor: toast.type === 'danger' ? '#fee2e2' : '#ecfdf5',
+            color: toast.type === 'danger' ? '#ef4444' : '#10b981',
+            border: `1.5px solid ${toast.type === 'danger' ? '#fca5a5' : '#6ee7b7'}`,
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            zIndex: 999999,
+            fontWeight: 600,
+            animation: 'slideUp 0.2s ease'
+          }}>
+            {toast.message}
+          </div>
+        )}
+        <Login onLoginSuccess={handleLoginSuccess} />
+      </>
+    );
+  }
+
   return (
     <div className={`app-container ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Toast Alert Popup */}
@@ -605,7 +700,7 @@ function App() {
       )}
 
       {/* SIDEBAR NAVIGATION PANEL */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
 
       {/* MAIN CONTENT WRAPPER */}
       <main className="main-wrapper">

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   LayoutDashboard,
   Home,
@@ -6,11 +5,12 @@ import {
   Briefcase,
   DollarSign,
   TrendingDown,
-  FileText
+  FileText,
+  LogOut
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 
-function Sidebar({ activeTab, setActiveTab }) {
+function Sidebar({ activeTab, setActiveTab, onLogout }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -79,16 +79,37 @@ function Sidebar({ activeTab, setActiveTab }) {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="user-profile-section">
-          <img
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-            alt="Pak RT"
-            className="user-profile-photo"
-          />
-          <div className="user-profile-info">
-            <span className="user-profile-name">Pak RT</span>
-            <span className="user-profile-role">Administrator</span>
+        <div className="user-profile-section" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} className="user-profile-meta-wrapper">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
+              alt="Pak RT"
+              className="user-profile-photo"
+            />
+            <div className="user-profile-info">
+              <span className="user-profile-name">Pak RT</span>
+              <span className="user-profile-role">Administrator</span>
+            </div>
           </div>
+          <button
+            onClick={onLogout}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-sidebar)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '6px',
+              borderRadius: '6px',
+              transition: 'all 0.2s ease',
+            }}
+            className="logout-btn menu-text"
+            title="Keluar dari Sistem"
+          >
+            <LogOut size={18} />
+          </button>
         </div>
       </div>
     </aside>

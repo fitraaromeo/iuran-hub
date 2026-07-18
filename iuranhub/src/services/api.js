@@ -2,13 +2,22 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
 // Helper to make API calls directly to the database backend
 async function apiCall(endpoint, options = {}) {
+  const token = localStorage.getItem('iuranhub_token');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+
   const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
+    headers,
     ...options,
   });
+  
+  if (res.status === 401) {
+    localStorage.removeItem('iuranhub_token');
+    window.dispatchEvent(new Event('unauthorized-api-call'));
+  }
   
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
@@ -232,5 +241,33 @@ export const api = {
 
   getMonthlyDetail: async (month, year) => {
     return await apiCall(`reports/monthly-detail?month=${month}&year=${year}`);
+  },
+
+  // Authentication Endpoints
+  login: async (email, password) => {
+    const data = await apiCall('auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+    if (data.token) {
+      localStorage.setItem('iuranhub_token', data.token);
+    }
+    return data;
+  },
+
+  logout: async () => {
+    try {
+      await apiCall('auth/logout', {
+        method: 'POST'
+      });
+    } catch (e) {
+      console.error('Logout API call failed:', e);
+    } finally {
+      localStorage.removeItem('iuranhub_token');
+    }
+  },
+
+  getMe: async () => {
+    return await apiCall('auth/me');
   }
 };

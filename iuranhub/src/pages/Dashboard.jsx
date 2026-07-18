@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  DollarSign,
   Home,
   Users,
   CreditCard,
@@ -43,7 +42,12 @@ function Dashboard({
             </span>
           </div>
           <div className="kpi-card-icon-wrapper">
-            <DollarSign size={24} />
+            <span style={{
+              fontSize: '18px',
+              fontWeight: 900,
+              letterSpacing: '-0.5px',
+              lineHeight: 1
+            }}>Rp</span>
           </div>
         </div>
 
