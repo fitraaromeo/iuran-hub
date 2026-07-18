@@ -65,12 +65,21 @@ function App() {
   const [showRemoveResident, setShowRemoveResident] = useState(false);
   const [showPayBulk, setShowPayBulk] = useState(false);
   const [showGenerateBills, setShowGenerateBills] = useState(false);
+  const [confirmPayInvoiceId, setConfirmPayInvoiceId] = useState(null);
+  const [activePaymentTimer, setActivePaymentTimer] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Active items for modals
   const [selectedHouse, setSelectedHouse] = useState(null);
 
   // Form Field States
   const [houseForm, setHouseForm] = useState({ house_number: '' });
+  const [showEditHouse, setShowEditHouse] = useState(false);
+  const [editHouseForm, setEditHouseForm] = useState({ house_number: '' });
+  const [showHouseDetail, setShowHouseDetail] = useState(false);
+  const [houseDetailData, setHouseDetailData] = useState(null);
+  const [loadingHouseDetail, setLoadingHouseDetail] = useState(false);
   const [residentForm, setResidentForm] = useState({
     full_name: '',
     status: 'permanent',
@@ -78,12 +87,32 @@ function App() {
     is_married: 0,
     identity_card_photo: null
   });
+  const [showEditResident, setShowEditResident] = useState(false);
+  const [selectedResident, setSelectedResident] = useState(null);
+  const [editResidentForm, setEditResidentForm] = useState({
+    full_name: '',
+    status: 'permanent',
+    phone_number: '',
+    is_married: 0,
+    identity_card_photo: null
+  });
   const [feeTypeForm, setFeeTypeForm] = useState({ name: '', amount: '' });
+  const [showEditFeeType, setShowEditFeeType] = useState(false);
+  const [selectedFeeType, setSelectedFeeType] = useState(null);
+  const [editFeeTypeForm, setEditFeeTypeForm] = useState({ name: '', amount: '' });
   const [expenseForm, setExpenseForm] = useState({
     amount: '',
     description: '',
     category: 'other',
     date: new Date().toISOString().split('T')[0]
+  });
+  const [showEditExpense, setShowEditExpense] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [editExpenseForm, setEditExpenseForm] = useState({
+    amount: '',
+    description: '',
+    category: 'other',
+    date: ''
   });
   const [paymentForm, setPaymentForm] = useState({
     house_id: '',
@@ -265,6 +294,32 @@ function App() {
     }
   };
 
+  const handleUpdateHouse = async (e) => {
+    e.preventDefault();
+    try {
+      await api.updateHouse(selectedHouse.id, editHouseForm);
+      triggerToast('Data rumah berhasil diperbarui!');
+      setShowEditHouse(false);
+      loadData();
+    } catch (err) {
+      triggerToast(err.message, 'danger');
+    }
+  };
+
+  const handleViewHouseDetail = async (houseId) => {
+    setShowHouseDetail(true);
+    setLoadingHouseDetail(true);
+    try {
+      const res = await api.getHouse(houseId);
+      setHouseDetailData(res.data);
+    } catch (err) {
+      triggerToast(err.message, 'danger');
+      setShowHouseDetail(false);
+    } finally {
+      setLoadingHouseDetail(false);
+    }
+  };
+
   const handleCreateResident = async (e) => {
     e.preventDefault();
     try {
@@ -272,7 +327,7 @@ function App() {
       data.append('full_name', residentForm.full_name);
       data.append('status', residentForm.status);
       data.append('phone_number', residentForm.phone_number);
-      data.append('is_married', residentForm.is_married);
+      data.append('is_married', residentForm.is_married ? 1 : 0);
       if (residentForm.identity_card_photo) {
         data.append('identity_card_photo', residentForm.identity_card_photo);
       }
@@ -281,6 +336,27 @@ function App() {
       triggerToast('Warga berhasil terdaftar!');
       setShowAddResident(false);
       setResidentForm({ full_name: '', status: 'permanent', phone_number: '', is_married: 0, identity_card_photo: null });
+      loadData();
+    } catch (err) {
+      triggerToast(err.message, 'danger');
+    }
+  };
+
+  const handleUpdateResident = async (e) => {
+    e.preventDefault();
+    try {
+      const data = new FormData();
+      data.append('full_name', editResidentForm.full_name);
+      data.append('status', editResidentForm.status);
+      data.append('phone_number', editResidentForm.phone_number);
+      data.append('is_married', editResidentForm.is_married ? 1 : 0);
+      if (editResidentForm.identity_card_photo) {
+        data.append('identity_card_photo', editResidentForm.identity_card_photo);
+      }
+
+      await api.updateResident(selectedResident.id, data);
+      triggerToast('Data warga berhasil diperbarui!');
+      setShowEditResident(false);
       loadData();
     } catch (err) {
       triggerToast(err.message, 'danger');
@@ -300,6 +376,17 @@ function App() {
     }
   };
 
+  const handleUpdateFeeType = async (e) => {
+    e.preventDefault();
+    try {
+      await api.updateFeeType(selectedFeeType.id, editFeeTypeForm);
+      triggerToast('Jenis iuran berhasil diperbarui!');
+      setShowEditFeeType(false);
+      loadData();
+    } catch (err) {
+      triggerToast(err.message, 'danger');
+    }
+  };
   const handleCreateExpense = async (e) => {
     e.preventDefault();
     try {
@@ -307,6 +394,18 @@ function App() {
       triggerToast('Pengeluaran kas berhasil dicatat!');
       setShowAddExpense(false);
       setExpenseForm({ amount: '', description: '', category: 'other', date: new Date().toISOString().split('T')[0] });
+      loadData();
+    } catch (err) {
+      triggerToast(err.message, 'danger');
+    }
+  };
+
+  const handleUpdateExpense = async (e) => {
+    e.preventDefault();
+    try {
+      await api.updateExpense(selectedExpense.id, editExpenseForm);
+      triggerToast('Catatan pengeluaran berhasil diperbarui!');
+      setShowEditExpense(false);
       loadData();
     } catch (err) {
       triggerToast(err.message, 'danger');
@@ -376,10 +475,67 @@ function App() {
     }
   };
 
-  const handlePayInvoice = async (invoiceId) => {
+  const handlePayInvoice = (invoiceId) => {
+    setConfirmPayInvoiceId(invoiceId);
+  };
+
+  const executePayInvoice = (invoiceId) => {
+    setConfirmPayInvoiceId(null);
+    const seconds = 5;
+
+    // Clean up any existing active timer first
+    if (activePaymentTimer) {
+      clearInterval(activePaymentTimer.intervalId);
+    }
+
+    let secondsLeft = seconds;
+    const intervalId = setInterval(async () => {
+      secondsLeft -= 1;
+      if (secondsLeft <= 0) {
+        clearInterval(intervalId);
+        setActivePaymentTimer(null);
+        try {
+          await api.payBill(invoiceId);
+          triggerToast('Tagihan berhasil dilunasi!');
+          loadData();
+        } catch (err) {
+          triggerToast(err.message, 'danger');
+        }
+      } else {
+        setActivePaymentTimer(prev => prev ? { ...prev, secondsLeft } : null);
+      }
+    }, 1000);
+
+    setActivePaymentTimer({
+      id: invoiceId,
+      secondsLeft,
+      intervalId
+    });
+
+    triggerToast(`Pelunasan tagihan akan diproses dalam 5 detik.`, 'info');
+  };
+
+  const handleDeleteExecute = async () => {
+    if (!deleteConfirm) return;
     try {
-      await api.payBill(invoiceId);
-      triggerToast('Tagihan berhasil dilunasi!');
+      const { type, id } = deleteConfirm;
+      if (type === 'house') {
+        await api.deleteHouse(id);
+        triggerToast('Rumah berhasil dihapus!');
+      } else if (type === 'resident') {
+        await api.deleteResident(id);
+        triggerToast('Data warga berhasil dihapus!');
+      } else if (type === 'fee-type') {
+        await api.deleteFeeType(id);
+        triggerToast('Jenis iuran berhasil dihapus!');
+      } else if (type === 'payment') {
+        await api.deletePayment(id);
+        triggerToast('Tagihan iuran berhasil dihapus!');
+      } else if (type === 'expense') {
+        await api.deleteExpense(id);
+        triggerToast('Catatan pengeluaran berhasil dihapus!');
+      }
+      setDeleteConfirm(null);
       loadData();
     } catch (err) {
       triggerToast(err.message, 'danger');
@@ -427,7 +583,7 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Toast Alert Popup */}
       {toast && (
         <div style={{
@@ -453,7 +609,13 @@ function App() {
 
       {/* MAIN CONTENT WRAPPER */}
       <main className="main-wrapper">
-        <Header activeTab={activeTab} isLive={isLive} theme={theme} setTheme={setTheme} />
+        <Header
+          activeTab={activeTab}
+          isLive={isLive}
+          theme={theme}
+          setTheme={setTheme}
+          onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
 
         {/* 1. DASHBOARD VIEW */}
         {activeTab === 'dashboard' && (
@@ -494,6 +656,13 @@ function App() {
             setShowAssignResident={setShowAssignResident}
             setRemoveForm={setRemoveForm}
             setShowRemoveResident={setShowRemoveResident}
+            onEditHouse={(house) => {
+              setSelectedHouse(house);
+              setEditHouseForm({ house_number: house.house_number });
+              setShowEditHouse(true);
+            }}
+            onViewHouseDetail={handleViewHouseDetail}
+            onDeleteHouse={(id, name) => setDeleteConfirm({ type: 'house', id, label: `Rumah Blok ${name}` })}
           />
         )}
 
@@ -507,6 +676,18 @@ function App() {
             setResidentsPage={setResidentsPage}
             residentsLastPage={residentsLastPage}
             setShowAddResident={setShowAddResident}
+            onEditResident={(res) => {
+              setSelectedResident(res);
+              setEditResidentForm({
+                full_name: res.full_name,
+                status: res.status,
+                phone_number: res.phone_number,
+                is_married: res.is_married ? 1 : 0,
+                identity_card_photo: null
+              });
+              setShowEditResident(true);
+            }}
+            onDeleteResident={(id, name) => setDeleteConfirm({ type: 'resident', id, label: `Warga ${name}` })}
           />
         )}
 
@@ -516,6 +697,12 @@ function App() {
             feeTypes={feeTypes}
             setShowAddFeeType={setShowAddFeeType}
             formatRupiah={formatRupiah}
+            onEditFeeType={(type) => {
+              setSelectedFeeType(type);
+              setEditFeeTypeForm({ name: type.name, amount: type.amount });
+              setShowEditFeeType(true);
+            }}
+            onDeleteFeeType={(id, name) => setDeleteConfirm({ type: 'fee-type', id, label: `Kategori Iuran ${name}` })}
           />
         )}
 
@@ -540,6 +727,7 @@ function App() {
             handlePayInvoice={handlePayInvoice}
             formatRupiah={formatRupiah}
             formatDateTime={formatDateTime}
+            onDeletePayment={(id, name) => setDeleteConfirm({ type: 'payment', id, label: `Tagihan Iuran ${name}` })}
           />
         )}
 
@@ -553,6 +741,17 @@ function App() {
             setShowAddExpense={setShowAddExpense}
             formatRupiah={formatRupiah}
             formatDate={formatDate}
+            onEditExpense={(exp) => {
+              setSelectedExpense(exp);
+              setEditExpenseForm({
+                amount: exp.amount,
+                description: exp.description,
+                category: exp.category,
+                date: exp.date.split('T')[0]
+              });
+              setShowEditExpense(true);
+            }}
+            onDeleteExpense={(id, name) => setDeleteConfirm({ type: 'expense', id, label: `Pengeluaran ${name}` })}
           />
         )}
 
@@ -1070,6 +1269,432 @@ function App() {
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
               <button type="button" onClick={() => setShowAddPayment(false)} className="btn btn-secondary">Batal</button>
               <button type="submit" className="btn btn-primary">Simpan Catatan</button>
+            </div>
+          </form>
+        </div>
+      )}
+      {/* 10. Edit Resident Modal */}
+      {showEditResident && selectedResident && (
+        <div className="modal-overlay">
+          <form onSubmit={handleUpdateResident} className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">Edit Data Warga: {selectedResident.full_name}</h3>
+              <button type="button" onClick={() => setShowEditResident(false)} className="modal-close-btn">&times;</button>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nama Lengkap</label>
+              <input
+                type="text"
+                value={editResidentForm.full_name}
+                onChange={(e) => setEditResidentForm({ ...editResidentForm, full_name: e.target.value })}
+                required
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Status Hubungan Rumah</label>
+              <select
+                value={editResidentForm.status}
+                onChange={(e) => setEditResidentForm({ ...editResidentForm, status: e.target.value })}
+                className="form-control"
+              >
+                <option value="permanent">Tetap (Permanent)</option>
+                <option value="contract">Kontrak (Temporary)</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nomor Telepon</label>
+              <input
+                type="text"
+                value={editResidentForm.phone_number}
+                onChange={(e) => setEditResidentForm({ ...editResidentForm, phone_number: e.target.value })}
+                required
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Status Pernikahan</label>
+              <select
+                value={editResidentForm.is_married}
+                onChange={(e) => setEditResidentForm({ ...editResidentForm, is_married: parseInt(e.target.value) })}
+                className="form-control"
+              >
+                <option value="0">Belum Menikah</option>
+                <option value="1">Menikah</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Perbarui Foto KTP (Optional - Biarkan kosong jika tidak diganti)</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setEditResidentForm({ ...editResidentForm, identity_card_photo: e.target.files[0] })}
+                className="form-control"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <button type="button" onClick={() => setShowEditResident(false)} className="btn btn-secondary">Batal</button>
+              <button type="submit" className="btn btn-primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      )}
+      {/* 11. Edit House Modal */}
+      {showEditHouse && selectedHouse && (
+        <div className="modal-overlay">
+          <form onSubmit={handleUpdateHouse} className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">Edit Nomor/Blok Rumah</h3>
+              <button type="button" onClick={() => setShowEditHouse(false)} className="modal-close-btn">&times;</button>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nomor / Blok Rumah</label>
+              <input
+                type="text"
+                value={editHouseForm.house_number}
+                onChange={(e) => setEditHouseForm({ ...editHouseForm, house_number: e.target.value })}
+                required
+                placeholder="Contoh: A-01, B-12"
+                className="form-control"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <button type="button" onClick={() => setShowEditHouse(false)} className="btn btn-secondary">Batal</button>
+              <button type="submit" className="btn btn-primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* 12. Detail & Riwayat Rumah Modal */}
+      {showHouseDetail && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '750px', width: '90%' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Detail & Riwayat Rumah</h3>
+              <button type="button" onClick={() => setShowHouseDetail(false)} className="modal-close-btn">&times;</button>
+            </div>
+            
+            {loadingHouseDetail ? (
+              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  border: '3px solid var(--border-color)',
+                  borderTopColor: 'var(--primary)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto 12px'
+                }}></div>
+                <style>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}</style>
+                <p style={{ marginTop: '12px', color: 'var(--text-muted)' }}>Memuat data riwayat rumah...</p>
+              </div>
+            ) : houseDetailData ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                
+                {/* 1. Keterangan Rumah */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--panel-bg-darker, #212529)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                  <div>
+                    <h4 style={{ fontSize: '18px', fontWeight: 800 }}>Rumah Blok {houseDetailData.house_number}</h4>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                      Status Hunian: <span className={`badge ${houseDetailData.status === 'occupied' ? 'badge-success' : 'badge-warning'}`}>{houseDetailData.status === 'occupied' ? 'Dihuni' : 'Kosong'}</span>
+                    </p>
+                  </div>
+                  {houseDetailData.current_occupant?.residence && (
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Penghuni Aktif:</span>
+                      <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--primary)' }}>{houseDetailData.current_occupant.residence.full_name}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Catatan Historical Penghuni */}
+                <div>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    Catatan Riwayat Penghuni
+                  </h4>
+                  <div className="data-table-container" style={{ maxHeight: '180px', overflowY: 'auto' }}>
+                    <table className="data-table" style={{ fontSize: '13px' }}>
+                      <thead>
+                        <tr>
+                          <th>Nama Warga</th>
+                          <th>Status Hubungan</th>
+                          <th>Tanggal Mulai</th>
+                          <th>Tanggal Selesai</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {houseDetailData.histories && houseDetailData.histories.length > 0 ? (
+                          houseDetailData.histories.map((hist) => (
+                            <tr key={hist.id}>
+                              <td className="font-bold">{hist.residence?.full_name || 'N/A'}</td>
+                              <td>
+                                <span className={`badge ${hist.residence?.status === 'permanent' ? 'badge-primary' : 'badge-accent'}`}>
+                                  {hist.residence?.status === 'permanent' ? 'Tetap' : 'Kontrak'}
+                                </span>
+                              </td>
+                              <td>{formatDate(hist.start_date)}</td>
+                              <td>
+                                {hist.end_date ? (
+                                  formatDate(hist.end_date)
+                                ) : (
+                                  <span className="badge badge-success">Aktif (Sekarang)</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="4" style={{ textAlign: 'center', color: 'var(--text-muted)', fontStyle: 'italic' }}>Belum ada riwayat hunian terdaftar.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 3. Riwayat Tagihan & Pembayaran */}
+                <div>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    Riwayat Tagihan & Pembayaran
+                  </h4>
+                  <div className="data-table-container" style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                    <table className="data-table" style={{ fontSize: '13px' }}>
+                      <thead>
+                        <tr>
+                          <th>Bulan/Tahun</th>
+                          <th>Nama Warga Pembayar</th>
+                          <th>Jenis Iuran</th>
+                          <th>Jumlah</th>
+                          <th className="text-right">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {houseDetailData.payments && houseDetailData.payments.length > 0 ? (
+                          houseDetailData.payments.map((pmt) => (
+                            <tr key={pmt.id}>
+                              <td className="font-bold">Bulan {pmt.month} / {pmt.year}</td>
+                              <td>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                  <span style={{ fontWeight: 600 }}>{pmt.residence?.full_name || 'N/A'}</span>
+                                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                    HP: {pmt.residence?.phone_number || '-'} ({pmt.residence?.status === 'permanent' ? 'Tetap' : 'Kontrak'})
+                                  </span>
+                                </div>
+                              </td>
+                              <td>{pmt.fee_type?.name || 'N/A'}</td>
+                              <td>{formatRupiah(pmt.amount)}</td>
+                              <td className="text-right">
+                                <span className={`badge ${pmt.status === 'paid' ? 'badge-success' : 'badge-danger'}`}>
+                                  {pmt.status === 'paid' ? 'Lunas' : 'Belum Lunas'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)', fontStyle: 'italic' }}>Belum ada riwayat tagihan iuran terdaftar.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                  <button type="button" onClick={() => setShowHouseDetail(false)} className="btn btn-secondary">Tutup</button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-muted)' }}>
+                Gagal memuat detail rumah.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* 13. Edit Fee Type Modal */}
+      {showEditFeeType && selectedFeeType && (
+        <div className="modal-overlay">
+          <form onSubmit={handleUpdateFeeType} className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">Edit Jenis Iuran</h3>
+              <button type="button" onClick={() => setShowEditFeeType(false)} className="modal-close-btn">&times;</button>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nama Iuran</label>
+              <input
+                type="text"
+                value={editFeeTypeForm.name}
+                onChange={(e) => setEditFeeTypeForm({ ...editFeeTypeForm, name: e.target.value })}
+                required
+                placeholder="Contoh: Kebersihan, Satpam"
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nominal Bulanan (Rp)</label>
+              <input
+                type="number"
+                value={editFeeTypeForm.amount}
+                onChange={(e) => setEditFeeTypeForm({ ...editFeeTypeForm, amount: e.target.value })}
+                required
+                placeholder="Contoh: 100000"
+                className="form-control"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <button type="button" onClick={() => setShowEditFeeType(false)} className="btn btn-secondary">Batal</button>
+              <button type="submit" className="btn btn-primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      )}
+      {/* 14. Payment Confirmation Modal */}
+      {confirmPayInvoiceId && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '450px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Konfirmasi Pelunasan</h3>
+              <button type="button" onClick={() => setConfirmPayInvoiceId(null)} className="modal-close-btn">&times;</button>
+            </div>
+            <div style={{ margin: '12px 0', fontSize: '14px', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+              Apakah Anda yakin ingin memproses pelunasan untuk tagihan iuran ini?
+              <br />
+              <strong style={{ color: 'var(--primary)' }}>Catatan:</strong> Setelah mengonfirmasi, pembayaran akan ditunda selama 5 detik untuk memberi Anda kesempatan membatalkan transaksi jika terjadi kesalahan.
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <button type="button" onClick={() => setConfirmPayInvoiceId(null)} className="btn btn-secondary">Batal</button>
+              <button type="button" onClick={() => executePayInvoice(confirmPayInvoiceId)} className="btn btn-primary">Ya, Proses Pembayaran</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 15. Undo Payment Banner */}
+      {activePaymentTimer && (
+        <div style={{
+          position: 'fixed',
+          top: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10000,
+          backgroundColor: 'var(--bg-card, #1c1c1e)',
+          border: '2px solid var(--primary)',
+          borderRadius: '16px',
+          padding: '16px 24px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--text-main)' }}>Melunasi Tagihan...</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Akan otomatis diproses dalam {activePaymentTimer.secondsLeft} detik</span>
+          </div>
+          <div style={{
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            border: '2px solid var(--border-color)',
+            borderTopColor: 'var(--primary)',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <button
+            onClick={() => {
+              clearInterval(activePaymentTimer.intervalId);
+              setActivePaymentTimer(null);
+              triggerToast('Pembayaran berhasil dibatalkan!', 'warning');
+            }}
+            className="btn btn-danger"
+            style={{ padding: '6px 12px', fontSize: '12px' }}
+          >
+            Batalkan Pembayaran
+          </button>
+        </div>
+      )}
+      {/* 16. Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '450px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title" style={{ color: '#ef4444' }}>Konfirmasi Hapus Data</h3>
+              <button type="button" onClick={() => setDeleteConfirm(null)} className="modal-close-btn">&times;</button>
+            </div>
+            <div style={{ margin: '12px 0', fontSize: '14px', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+              Apakah Anda yakin ingin menghapus <strong style={{ color: 'var(--text-main)' }}>{deleteConfirm.label}</strong>?
+              <br /><br />
+              <span style={{ color: '#ef4444', fontWeight: 600 }}>Peringatan:</span> Tindakan ini akan menghapus data tersebut secara permanen dari sistem dan tidak dapat dibatalkan.
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <button type="button" onClick={() => setDeleteConfirm(null)} className="btn btn-secondary">Batal</button>
+              <button type="button" onClick={handleDeleteExecute} className="btn btn-danger">Ya, Hapus Permanen</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 17. Edit Expense Modal */}
+      {showEditExpense && selectedExpense && (
+        <div className="modal-overlay">
+          <form onSubmit={handleUpdateExpense} className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">Edit Catatan Pengeluaran</h3>
+              <button type="button" onClick={() => setShowEditExpense(false)} className="modal-close-btn">&times;</button>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Deskripsi Pengeluaran</label>
+              <input
+                type="text"
+                value={editExpenseForm.description}
+                onChange={(e) => setEditExpenseForm({ ...editExpenseForm, description: e.target.value })}
+                required
+                placeholder="Contoh: Perbaikan Pagar Pos Satpam"
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Kategori</label>
+              <select
+                value={editExpenseForm.category}
+                onChange={(e) => setEditExpenseForm({ ...editExpenseForm, category: e.target.value })}
+                className="form-control"
+              >
+                <option value="maintenance">Perawatan/Perbaikan</option>
+                <option value="salary">Gaji Karyawan</option>
+                <option value="electricity">Listrik & Air</option>
+                <option value="other">Lainnya</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nominal (Rp)</label>
+              <input
+                type="number"
+                value={editExpenseForm.amount}
+                onChange={(e) => setEditExpenseForm({ ...editExpenseForm, amount: e.target.value })}
+                required
+                placeholder="Contoh: 150000"
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Tanggal Pengeluaran</label>
+              <input
+                type="date"
+                value={editExpenseForm.date}
+                onChange={(e) => setEditExpenseForm({ ...editExpenseForm, date: e.target.value })}
+                required
+                className="form-control"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              <button type="button" onClick={() => setShowEditExpense(false)} className="btn btn-secondary">Batal</button>
+              <button type="submit" className="btn btn-primary">Simpan</button>
             </div>
           </form>
         </div>

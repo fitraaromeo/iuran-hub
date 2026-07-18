@@ -25,7 +25,8 @@ function Payments({
   paymentForm,
   handlePayInvoice,
   formatRupiah,
-  formatDateTime
+  formatDateTime,
+  onDeletePayment
 }) {
   return (
     <div className="dashboard-content">
@@ -117,15 +118,24 @@ function Payments({
                   </td>
                   <td>{formatDateTime(p.payment_date)}</td>
                   <td className="text-right">
-                    {p.status === 'unpaid' && (
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      {p.status === 'unpaid' && (
+                        <button
+                          onClick={() => handlePayInvoice(p.id)}
+                          className="btn btn-primary"
+                          style={{ padding: '6px 12px', fontSize: '12px' }}
+                        >
+                          Bayar
+                        </button>
+                      )}
                       <button
-                        onClick={() => handlePayInvoice(p.id)}
-                        className="btn btn-primary"
-                        style={{ padding: '6px 12px', fontSize: '12px' }}
+                        onClick={() => onDeletePayment(p.id, `${p.fee_type?.name} Blok ${p.house?.house_number} (${p.month}/${p.year})`)}
+                        className="btn btn-danger"
+                        style={{ padding: '6px 12px', fontSize: '12px', backgroundColor: '#ef4444', borderColor: '#ef4444', color: 'white' }}
                       >
-                        Bayar
+                        Hapus
                       </button>
-                    )}
+                    </div>
                   </td>
                 </tr>
               ))}

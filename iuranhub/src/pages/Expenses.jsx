@@ -8,7 +8,9 @@ function Expenses({
   expensesLastPage,
   setShowAddExpense,
   formatRupiah,
-  formatDate
+  formatDate,
+  onDeleteExpense,
+  onEditExpense
 }) {
   return (
     <div className="dashboard-content">
@@ -27,6 +29,7 @@ function Expenses({
                 <th>Kategori</th>
                 <th>Deskripsi Pengeluaran</th>
                 <th>Nominal</th>
+                <th className="text-right">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -40,6 +43,22 @@ function Expenses({
                   </td>
                   <td>{e.description}</td>
                   <td className="font-bold">{formatRupiah(e.amount)}</td>
+                  <td className="text-right">
+                    <button
+                      onClick={() => onEditExpense(e)}
+                      className="btn btn-primary"
+                      style={{ padding: '6px 12px', fontSize: '12px', marginRight: '8px' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => onDeleteExpense(e.id, `${e.description} (${formatRupiah(e.amount)})`)}
+                      className="btn btn-danger"
+                      style={{ padding: '6px 12px', fontSize: '12px', backgroundColor: '#ef4444', borderColor: '#ef4444', color: 'white' }}
+                    >
+                      Hapus
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -13,7 +13,9 @@ function Residents({
   residentsPage,
   setResidentsPage,
   residentsLastPage,
-  setShowAddResident
+  setShowAddResident,
+  onEditResident,
+  onDeleteResident
 }) {
   const [selectedKtpPhoto, setSelectedKtpPhoto] = React.useState(null);
   return (
@@ -49,6 +51,7 @@ function Residents({
                 <th>Nomor Telepon</th>
                 <th>Status Menikah</th>
                 <th>Foto KTP</th>
+                <th className="text-right">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +82,22 @@ function Residents({
                     ) : (
                       <span className="badge badge-warning">Tidak Ada</span>
                     )}
+                  </td>
+                   <td className="text-right">
+                    <button
+                      onClick={() => onEditResident(res)}
+                      className="btn btn-primary"
+                      style={{ padding: '6px 12px', fontSize: '12px', marginRight: '8px' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => onDeleteResident(res.id, res.full_name)}
+                      className="btn btn-danger"
+                      style={{ padding: '6px 12px', fontSize: '12px', backgroundColor: '#ef4444', borderColor: '#ef4444', color: 'white' }}
+                    >
+                      Hapus
+                    </button>
                   </td>
                 </tr>
               ))}

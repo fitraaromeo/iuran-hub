@@ -22,7 +22,9 @@ function Houses({
   setAssignForm,
   setShowAssignResident,
   setRemoveForm,
-  setShowRemoveResident
+  setShowRemoveResident,
+  onEditHouse,
+  onViewHouseDetail
 }) {
   return (
     <div className="dashboard-content">
@@ -49,9 +51,35 @@ function Houses({
 
       <div className="cards-grid-list">
         {houses.map((house) => (
-          <div className="card-item" key={house.id}>
+          <div
+            className="card-item clickable"
+            key={house.id}
+            onClick={() => onViewHouseDetail(house.id)}
+          >
             <div className="card-item-header">
-              <span className="card-item-number">{house.house_number}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="card-item-number">{house.house_number}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditHouse(house);
+                  }}
+                  className="btn btn-secondary"
+                  style={{ padding: '2px 6px', fontSize: '11px', borderRadius: '4px' }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteHouse(house.id, house.house_number);
+                  }}
+                  className="btn btn-danger"
+                  style={{ padding: '2px 6px', fontSize: '11px', borderRadius: '4px', backgroundColor: '#ef4444', borderColor: '#ef4444', color: 'white' }}
+                >
+                  Hapus
+                </button>
+              </div>
               <span className={`badge ${house.status === 'occupied' ? 'badge-success' : 'badge-warning'}`}>
                 {house.status === 'occupied' ? 'Dihuni' : 'Kosong'}
               </span>
@@ -76,10 +104,11 @@ function Houses({
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', marginTop: '10px', borderTop: '1px solid var(--border-color)', paddingTop: '14px' }}>
+             <div style={{ display: 'flex', gap: '10px', marginTop: '10px', borderTop: '1px solid var(--border-color)', paddingTop: '14px' }}>
               {house.status === 'vacant' ? (
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setSelectedHouse(house);
                     setAssignForm({ residence_id: residents[0]?.id || '', start_date: new Date().toISOString().split('T')[0] });
                     setShowAssignResident(true);
@@ -91,7 +120,8 @@ function Houses({
                 </button>
               ) : (
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setSelectedHouse(house);
                     setRemoveForm({ end_date: new Date().toISOString().split('T')[0] });
                     setShowRemoveResident(true);

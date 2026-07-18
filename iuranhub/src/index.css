@@ -97,6 +97,12 @@ body {
   border-right: 1px solid var(--border-color);
   z-index: 10;
   flex-shrink: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar-brand {
@@ -133,6 +139,12 @@ body {
   flex-direction: column;
   gap: 6px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar-menu::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar-group-label {
@@ -906,6 +918,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-item.clickable {
+  cursor: pointer;
+}
+
+.card-item.clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg, 0 10px 20px rgba(0, 0, 0, 0.08));
+  border-color: var(--primary);
 }
 
 .card-item-header {
@@ -926,9 +949,95 @@ body {
   to { opacity: 1; }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @keyframes slideUp {
   from { transform: translateY(12px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* COLLAPSED SIDEBAR STYLING */
+.sidebar {
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-collapsed .sidebar {
+  width: 80px;
+}
+
+.sidebar-collapsed .sidebar-title,
+.sidebar-collapsed .sidebar-group-label,
+.sidebar-collapsed .sidebar-footer .user-profile-info,
+.sidebar-collapsed .sidebar-menu-item .menu-text {
+  display: none !important;
+}
+
+.sidebar-collapsed .sidebar-brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar-collapsed .sidebar-logo {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.sidebar-collapsed .sidebar-menu-item {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 6px auto;
+  justify-content: center;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-collapsed .sidebar-menu-item .icon {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-collapsed .sidebar-menu-item.active {
+  box-shadow: inset 4px 0 0 var(--primary);
+}
+
+.sidebar-collapsed .user-profile-section {
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-collapsed .user-profile-photo {
+  margin: 0 auto;
+}
+
+/* SIDEBAR HAMBURGER TOGGLE BUTTON ANIMATION */
+.sidebar-toggle-btn-menu {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sidebar-toggle-btn-menu:hover {
+  background-color: var(--sidebar-active-bg) !important;
+  transform: scale(1.15) translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
+  color: var(--primary) !important;
+}
+
+.sidebar-toggle-btn-menu:active {
+  transform: scale(0.92) translateY(0);
+}
+
+.sidebar-toggle-btn-menu svg {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-toggle-btn-menu:hover svg {
+  transform: translateX(3px);
 }
 
 /* UTILS */
@@ -941,3 +1050,263 @@ body {
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
 .pointer { cursor: pointer; }
+
+/* ═══════════════════════════════════════════════════
+   PROFESSIONAL PRINT REPORT STYLES
+   ═══════════════════════════════════════════════════ */
+
+/* ── Print-area: hidden on screen, shown only during printing ── */
+.print-area {
+  display: none;
+}
+
+/* ── Letterhead ── */
+.print-letterhead {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 14px;
+}
+.print-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.print-org-info {
+  flex: 1;
+}
+.print-org-name {
+  font-size: 18pt;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1a1a2e;
+}
+.print-letterhead-divider {
+  border: none;
+  border-top: 3px double #1a1a2e;
+  margin: 0 0 18px 0;
+}
+
+/* ── Document Title Block ── */
+.print-doc-title-block {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.print-doc-title {
+  font-size: 16pt;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #1a1a2e;
+}
+.print-doc-subtitle {
+  font-size: 11pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #444;
+  margin-top: 4px;
+}
+.print-doc-period {
+  font-size: 10pt;
+  color: #555;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ── Section Labels ── */
+.print-section-label {
+  font-size: 10pt;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #1a1a2e;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin: 20px 0 10px 0;
+}
+
+/* ── Summary Table ── */
+.print-summary-table {
+  width: 60%;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+  font-size: 11pt;
+}
+.print-summary-table td { padding: 4px 8px; }
+.print-summary-key { width: 55%; font-weight: 600; }
+.print-summary-sep { width: 5%; text-align: center; }
+.print-summary-val { width: 40%; font-weight: 700; }
+.print-income { color: #15803d; }
+.print-expense { color: #b91c1c; }
+.print-total { color: #1e3a8a; font-size: 13pt; }
+.print-summary-total-row td {
+  border-top: 2px solid #1a1a2e;
+  padding-top: 8px;
+}
+
+/* ── Ledger / Reconcile Tables ── */
+.print-ledger-table,
+.print-reconcile-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+  margin-bottom: 8px;
+}
+.print-ledger-table th {
+  background: #1a1a2e;
+  color: #ffffff;
+  padding: 7px 8px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.print-ledger-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+.print-row-even td { background: #f8fafc; }
+.print-empty-row {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 16px !important;
+}
+.print-th-no   { width: 36px; text-align: center; }
+.print-th-amount { text-align: right; white-space: nowrap; }
+.print-td-center { text-align: center; }
+.print-td-right  { text-align: right; }
+.print-bold      { font-weight: 700; }
+
+/* ── Subtotal / footer rows ── */
+.print-subtotal-row td {
+  background: #e8f4e8;
+  border-top: 2px solid #1a1a2e;
+  font-weight: 700;
+  padding: 7px 8px;
+}
+
+/* ── Reconcile table ── */
+.print-reconcile-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.print-reconcile-final td {
+  border-top: 2px solid #1a1a2e;
+  border-bottom: 2px solid #1a1a2e;
+  background: #eef2ff;
+  font-size: 11pt;
+  padding: 8px;
+}
+
+/* ── Signature Block ── */
+.print-signature-block {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 16px;
+}
+.print-signature-left,
+.print-signature-right {
+  width: 42%;
+  text-align: center;
+  font-size: 11pt;
+}
+.print-signature-title  { font-style: italic; color: #555; margin-bottom: 4px; }
+.print-signature-role   { font-weight: 700; margin-bottom: 60px; }
+.print-signature-line   { border-top: 1.5px solid #333; margin-bottom: 4px; }
+.print-signature-name   { font-weight: 600; }
+
+/* ── Print Footer ── */
+.print-footer {
+  margin-top: 28px;
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+  font-size: 8pt;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════
+   @MEDIA PRINT — Hide UI shell, show only report
+   ═══════════════════════════════════════════════════ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 20mm;
+  }
+
+  /* Hide all app chrome and the web-only view */
+  .sidebar,
+  .top-header,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Make the shell transparent / flat */
+  body,
+  #root,
+  .app-container,
+  .main-wrapper,
+  .dashboard-content {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Show the print-only area */
+  .print-area {
+    display: block !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    line-height: 1.5 !important;
+    page-break-inside: avoid;
+  }
+
+  /* Force black text on white everywhere */
+  .print-area * {
+    color: inherit !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Keep coloured headers dark */
+  .print-section-label,
+  .print-ledger-table th {
+    background: #1a1a2e !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-row-even td        { background: #f8fafc !important; }
+  .print-subtotal-row td    { background: #e8f4e8 !important; }
+  .print-reconcile-final td { background: #eef2ff !important; }
+  .print-income { color: #15803d !important; }
+  .print-expense { color: #b91c1c !important; }
+  .print-total  { color: #1e3a8a !important; }
+
+  /* Allow tables to break across pages naturally */
+  .print-ledger-table { page-break-inside: auto; }
+  .print-ledger-table tr { page-break-inside: avoid; }
+}

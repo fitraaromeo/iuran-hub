@@ -37,6 +37,19 @@ export const api = {
     });
   },
 
+  updateHouse: async (id, data) => {
+    return await apiCall(`houses/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  deleteHouse: async (id) => {
+    return await apiCall(`houses/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
   assignResident: async (houseId, residenceId, startDate) => {
     return await apiCall(`houses/${houseId}/assign-resident`, {
       method: 'POST',
@@ -86,6 +99,41 @@ export const api = {
     }
   },
 
+  updateResident: async (id, formData) => {
+    let body;
+    if (formData instanceof FormData) {
+      body = formData;
+      if (!body.has('_method')) {
+        body.append('_method', 'PUT');
+      }
+      const res = await fetch(`${API_BASE_URL}/residences/${id}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `API error ${res.status}`);
+      }
+      const data = await res.json();
+      return { ...data, isMock: false };
+    } else {
+      body = JSON.stringify(formData);
+      return await apiCall(`residences/${id}`, {
+        method: 'PUT',
+        body
+      });
+    }
+  },
+
+  deleteResident: async (id) => {
+    return await apiCall(`residences/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
   // Fee Types Master Data
   getFeeTypes: async (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -96,6 +144,19 @@ export const api = {
     return await apiCall('fee-types', {
       method: 'POST',
       body: JSON.stringify(data)
+    });
+  },
+
+  updateFeeType: async (id, data) => {
+    return await apiCall(`fee-types/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  deleteFeeType: async (id) => {
+    return await apiCall(`fee-types/${id}`, {
+      method: 'DELETE'
     });
   },
 
@@ -132,6 +193,12 @@ export const api = {
     });
   },
 
+  deletePayment: async (id) => {
+    return await apiCall(`payments/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
   // Expenses logs
   getExpenses: async (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -142,6 +209,19 @@ export const api = {
     return await apiCall('expenses', {
       method: 'POST',
       body: JSON.stringify(data)
+    });
+  },
+
+  updateExpense: async (id, data) => {
+    return await apiCall(`expenses/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  deleteExpense: async (id) => {
+    return await apiCall(`expenses/${id}`, {
+      method: 'DELETE'
     });
   },
 

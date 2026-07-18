@@ -1,7 +1,6 @@
-import React from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Menu } from 'lucide-react';
 
-function Header({ activeTab, isLive, theme, setTheme }) {
+function Header({ activeTab, isLive, theme, setTheme, onToggleSidebar }) {
   const getTitle = () => {
     switch (activeTab) {
       case 'dashboard': return 'Dashboard Kas RT';
@@ -17,7 +16,26 @@ function Header({ activeTab, isLive, theme, setTheme }) {
 
   return (
     <header className="top-header">
-      <div className="top-header-left">
+      <div className="top-header-left" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <button
+          onClick={onToggleSidebar}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-main)',
+            cursor: 'pointer',
+            padding: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '6px',
+            transition: 'background 0.2s'
+          }}
+          className="sidebar-toggle-btn-menu"
+          title="Tutup/Buka Sidebar"
+        >
+          <Menu size={20} />
+        </button>
         <h1 className="top-header-title">{getTitle()}</h1>
       </div>
 
